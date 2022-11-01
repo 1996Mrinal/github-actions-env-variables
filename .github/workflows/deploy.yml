@@ -5,10 +5,19 @@ on:
       - master
       - develop
 
+env:
+  MONGODB_DB_NAME: demo-database
+
 jobs:
   test:
     environment: testing
+    env:
+      MONGODB_CLUSTER_ADDRESS: cluster0.lpk6bk2.mongodb.net
+      MONGODB_USERNAME: baba_yaga
+      MONGODB_PASSWORD: dBYT2Couz2pxm7PZ
+      PORT: 8080
     runs-on: ubuntu-latest
+
     steps:
       - name: Get Code
         uses: actions/checkout@v3
@@ -23,13 +32,13 @@ jobs:
         run: npm ci
 
       - name: Run server
-        run: npm start & npx wait-on http://127.0.0.1:XYZ
+        run: npm start & npx wait-on http://127.0.0.1:$PORT
 
       - name: Run tests
         run: npm test
 
       - name: Output information
-        run: echo "..."
+        run: echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
 
   deploy:
     needs: test
@@ -37,4 +46,6 @@ jobs:
     steps:
       - name: Output information
         run: |
-          echo "..."
+          echo "MONGODB_USERNAME: ${{ env.MONGODB_USERNAME }}"
+          echo "MONGODB_DB_NAME: $MONGODB_DB_NAME"
+
